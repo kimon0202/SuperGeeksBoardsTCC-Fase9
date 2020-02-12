@@ -20,7 +20,7 @@ backend/node_modules
 backend/tmp
 
 # Environment variables, never commit this file
-backend/.env
+# backend/.env
 
 # The development sqlite file
 backend/database/*.sqlite

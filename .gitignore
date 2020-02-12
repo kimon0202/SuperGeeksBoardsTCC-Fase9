@@ -1,0 +1,26 @@
+frontend/node_modules/**/*
+frontend/.expo/*
+frontend/npm-debug.*
+frontend/*.jks
+frontend/*.p8
+frontend/*.p12
+frontend/*.key
+frontend/*.mobileprovision
+frontend/*.orig.*
+frontend/web-build/
+frontend/web-report/
+
+# macOS
+frontend/.DS_Store
+
+# Node modules
+backend/node_modules
+
+# Adonis directory for storing tmp files
+backend/tmp
+
+# Environment variables, never commit this file
+backend/.env
+
+# The development sqlite file
+backend/database/*.sqlite

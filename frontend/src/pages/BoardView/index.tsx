@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, TouchableOpacity } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { Dimensions, FlatList, Keyboard, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import Button from '../../components/Button';
+import Entry from '../../components/Entry';
 import Group from '../../components/Group';
 import Input from '../../components/Input';
 import { BoardModel } from '../../models/Board';
@@ -16,7 +17,6 @@ import {
   EmptyListContainer,
   EntriesContainer,
   EntryContainer,
-  EntryText,
   GroupButton,
   GroupsContainer,
   Header,
@@ -24,9 +24,12 @@ import {
   HorizontalPaddingContainer,
   Icon,
   ModalContainer,
+  ModalTitle,
   PaddingContainer,
   SafeArea,
 } from './styles';
+
+const { height } = Dimensions.get('screen');
 
 const screen = function BoardView({ navigation }) {
   const id = navigation.getParam('id');
@@ -40,8 +43,24 @@ const screen = function BoardView({ navigation }) {
   const [content, setContent] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
+  const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
+
   useEffect(() => {
     getBoardData();
+
+    Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardIsOpen(true);
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardIsOpen(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      Keyboard.removeAllListeners();
+    };
   }, []);
 
   async function getBoardData() {
@@ -92,17 +111,26 @@ const screen = function BoardView({ navigation }) {
         onBackdropPress={closeModal}
         onBackButtonPress={closeModal}
         onSwipeComplete={closeModal}
-        swipeDirection="down"
+        swipeDirection={['down', 'up', 'left', 'right']}
         avoidKeyboard={false}
+        style={{
+          top: keyboardIsOpen ? 0.2 * height : 0.5 * height,
+          margin: 0,
+        }}
       >
+        {/* <KeyboardAvoidingView behavior="position"> */}
         <SafeArea>
-          <ModalContainer>
+          <ModalContainer height={keyboardIsOpen ? 100 : 70}>
+            <PaddingContainer height={30} />
+            <ModalTitle>Create Group</ModalTitle>
+
+            <PaddingContainer height={30} />
+
             <Input
               value={groupName}
               onChange={setGroupName}
               placeholder="Group Name"
               returnKeyType="done"
-              autoCapitalize="words"
               autoCorrect={false}
             />
 
@@ -116,11 +144,12 @@ const screen = function BoardView({ navigation }) {
               <HorizontalPaddingContainer width={20} />
 
               <Button type="small" onPress={() => createGroup()}>
-                <AddButtonText>Add</AddButtonText>
+                <AddButtonText>Save</AddButtonText>
               </Button>
             </AddModalButtonsWrapper>
           </ModalContainer>
         </SafeArea>
+        {/* </KeyboardAvoidingView> */}
       </Modal>
     );
   }
@@ -132,12 +161,18 @@ const screen = function BoardView({ navigation }) {
         onBackdropPress={() => setdeleteModal(false)}
         onBackButtonPress={() => setdeleteModal(false)}
         onSwipeComplete={() => setdeleteModal(false)}
-        swipeDirection="down"
+        swipeDirection={['down', 'up', 'left', 'right']}
         avoidKeyboard={false}
+        style={{
+          top: 0.5 * height,
+          margin: 0,
+        }}
       >
+        {/* <KeyboardAvoidingView behavior="position"> */}
         <SafeArea>
-          <ModalContainer>
-            <AddButtonText>Are you sure?</AddButtonText>
+          <ModalContainer height={70}>
+            <PaddingContainer height={30} />
+            <ModalTitle>Are you sure?</ModalTitle>
 
             <PaddingContainer height={30} />
 
@@ -154,6 +189,7 @@ const screen = function BoardView({ navigation }) {
             </AddModalButtonsWrapper>
           </ModalContainer>
         </SafeArea>
+        {/* </KeyboardAvoidingView> */}
       </Modal>
     );
   }
@@ -181,11 +217,20 @@ const screen = function BoardView({ navigation }) {
         onBackdropPress={closeEntryModal}
         onBackButtonPress={closeEntryModal}
         onSwipeComplete={closeEntryModal}
-        swipeDirection="down"
+        swipeDirection={['down', 'up', 'left', 'right']}
         avoidKeyboard={false}
+        style={{
+          top: keyboardIsOpen ? 0.2 * height : 0.5 * height,
+          margin: 0,
+        }}
       >
         <SafeArea>
-          <ModalContainer>
+          <ModalContainer height={keyboardIsOpen ? 100 : 70}>
+            <PaddingContainer height={30} />
+            <ModalTitle>Create Entry</ModalTitle>
+
+            <PaddingContainer height={30} />
+
             <Input
               value={content}
               onChange={setContent}
@@ -301,17 +346,14 @@ const screen = function BoardView({ navigation }) {
         <EntriesContainer>
           <SwipeListView
             useFlatList
+            refreshing={refreshing}
+            onRefresh={() => getBoardData()}
             data={board?.groups[selected]?.entries}
             keyExtractor={(rowData, index) => {
               return String(rowData.id);
             }}
             renderItem={(rowData, rowMap) => (
-              <EntryContainer isOdd={rowData.index % 2 === 0}>
-                <EntryText>{rowData.item.content}</EntryText>
-                <TouchableOpacity onPress={() => deleteEntry(rowData.item.id)}>
-                  <Icon name="delete" size={24} color="#fff" />
-                </TouchableOpacity>
-              </EntryContainer>
+              <Entry rowData={rowData} onIconPress={deleteEntry} />
             )}
             ListHeaderComponent={() => (
               <>

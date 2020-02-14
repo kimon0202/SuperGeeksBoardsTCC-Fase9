@@ -15,6 +15,10 @@ interface IconProps {
   theme: DefaultTheme;
 }
 
+interface ModalContainerProps {
+  height?: number;
+}
+
 export const Container = styled.View`
   width: 100%;
   height: 100%;
@@ -22,18 +26,34 @@ export const Container = styled.View`
 `;
 
 export const ModalContainer = styled(Container)`
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 70%;
+  height: ${(props: ModalContainerProps) =>
+    props.height ? props.height : 40}%;
 `;
 
 export const AddModalButtonsWrapper = styled.View`
   display: flex;
   width: 100%;
+  /* height: 40%; */
   flex-direction: row;
 
   justify-content: center;
   align-items: center;
+
+  padding: 0 20px;
+`;
+
+export const ModalTitle = styled.Text`
+  color: ${props => props.theme.colors.textColor};
+  font-family: 'Roboto';
+  font-weight: bold;
+  font-size: 30px;
+  text-transform: uppercase;
+
+  text-align: center;
+  width: 100%;
+  /* height: 20%; */
 `;
 
 export const Header = styled.View`
@@ -141,4 +161,9 @@ export const EntryText = styled.Text`
 
   width: 70%;
   margin-right: 30px;
+`;
+
+export const KeyboardAvoidingView = styled.KeyboardAvoidingView`
+  width: 100%;
+  height: 100%;
 `;

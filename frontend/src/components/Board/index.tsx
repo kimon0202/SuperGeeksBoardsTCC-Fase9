@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import noImage from '../../assets/no-image.png';
@@ -21,7 +21,7 @@ interface EditableBoardProps {
   nameCallback?: (name: string) => void;
 }
 
-export default function Board(props: BoardProps) {
+function Board(props: BoardProps) {
   const { name, image, onIconPress, onPress } = props;
 
   return (
@@ -43,6 +43,8 @@ export default function Board(props: BoardProps) {
     </TouchableOpacity>
   );
 }
+
+export default memo(Board);
 
 export function EditableBoard(props: EditableBoardProps) {
   const { image, onImagePress, nameCallback } = props;

@@ -1,8 +1,8 @@
 import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, KeyboardAvoidingView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Keyboard } from 'react-native';
 import Modal from 'react-native-modal';
 
 import Board, { EditableBoard } from '../../components/Board';
@@ -22,6 +22,8 @@ import {
   Separator,
 } from './styles';
 
+const { height } = Dimensions.get('screen');
+
 function Main({ navigation }) {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [lastPage, setLastPage] = useState<number>(-1);
@@ -31,9 +33,25 @@ function Main({ navigation }) {
   const [boardName, setBoardName] = useState('');
   const [image, setImage] = useState(null);
 
+  const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
+
   useEffect(() => {
     getBoards(1);
     getPermissions();
+
+    Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardIsOpen(true);
+    });
+
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardIsOpen(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      Keyboard.removeAllListeners();
+    };
   }, []);
 
   async function getPermissions() {
@@ -129,42 +147,46 @@ function Main({ navigation }) {
 
   function renderAddBoardModal() {
     return (
-      <KeyboardAvoidingView behavior="padding">
-        <Modal
-          isVisible={addModal}
-          onBackdropPress={closeModal}
-          onBackButtonPress={closeModal}
-          onSwipeComplete={closeModal}
-          swipeDirection="down"
-          avoidKeyboard={false}
-        >
-          <SafeArea>
-            <ModalContainer>
-              <EditableBoard
-                onImagePress={() => pickImage()}
-                image={image}
-                nameCallback={(name: string) => {
-                  setBoardName(name);
-                }}
-              />
+      <Modal
+        isVisible={addModal}
+        onBackdropPress={closeModal}
+        onBackButtonPress={closeModal}
+        onSwipeComplete={closeModal}
+        swipeDirection={['down', 'up', 'left', 'right']}
+        avoidKeyboard={false}
+        style={{
+          top: keyboardIsOpen ? 0 : 0.3 * height,
+          margin: 0,
+        }}
+      >
+        {/* <KeyboardAvoidingView behavior="position"> */}
+        <SafeArea>
+          <ModalContainer height={keyboardIsOpen ? 100 : 70}>
+            <EditableBoard
+              onImagePress={() => pickImage()}
+              image={image}
+              nameCallback={(name: string) => {
+                setBoardName(name);
+              }}
+            />
 
-              <PaddingContainer height={30} />
+            <PaddingContainer height={30} />
 
-              <AddModalButtonsWrapper>
-                <Button type="small" onPress={closeModal}>
-                  <AddButtonText>Cancel</AddButtonText>
-                </Button>
+            <AddModalButtonsWrapper>
+              <Button type="small" onPress={closeModal}>
+                <AddButtonText>Cancel</AddButtonText>
+              </Button>
 
-                <HorizontalPaddingContainer width={20} />
+              <HorizontalPaddingContainer width={20} />
 
-                <Button type="small" onPress={() => addBoard()}>
-                  <AddButtonText>Save</AddButtonText>
-                </Button>
-              </AddModalButtonsWrapper>
-            </ModalContainer>
-          </SafeArea>
-        </Modal>
-      </KeyboardAvoidingView>
+              <Button type="small" onPress={() => addBoard()}>
+                <AddButtonText>Save</AddButtonText>
+              </Button>
+            </AddModalButtonsWrapper>
+          </ModalContainer>
+        </SafeArea>
+        {/* </KeyboardAvoidingView> */}
+      </Modal>
     );
   }
 

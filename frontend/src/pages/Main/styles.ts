@@ -6,6 +6,10 @@ interface HorizontalPaddingContainerProps {
   width: number;
 }
 
+interface ModalContainerProps {
+  height: number;
+}
+
 export const Container = styled.View`
   width: 100%;
   height: 100%;
@@ -18,7 +22,9 @@ export const Container = styled.View`
 
 export const ModalContainer = styled(Container)`
   justify-content: center;
-  height: 70%;
+  height: ${(props: ModalContainerProps) =>
+    props.height ? props.height : 70}%;
+  width: 100%;
 `;
 
 export const AddModalButtonsWrapper = styled.View`
@@ -73,4 +79,9 @@ export const AddButtonText = styled.Text`
   color: ${props => props.theme.colors.textColor};
   width: 100%;
   text-align: center;
+`;
+
+export const KeyboardAvoidingView = styled.KeyboardAvoidingView`
+  width: 100%;
+  height: 100%;
 `;

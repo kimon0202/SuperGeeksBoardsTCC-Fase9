@@ -70,6 +70,7 @@ export const HeaderText = styled.Text`
   text-transform: uppercase;
 
   text-align: center;
+  width: 80%;
 `;
 
 export const AddButtonText = styled.Text`

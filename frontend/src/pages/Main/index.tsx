@@ -2,11 +2,12 @@ import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Keyboard } from 'react-native';
+import { Dimensions, FlatList, Keyboard, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 
 import Board, { EditableBoard } from '../../components/Board';
 import Button from '../../components/Button';
+import { Icon } from '../../components/Entry/styles';
 import { BoardModel } from '../../models/Board';
 import api from '../../services/api';
 import {
@@ -24,7 +25,7 @@ import {
 
 const { height } = Dimensions.get('screen');
 
-function Main({ navigation }) {
+const screen = function Main({ navigation }) {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [lastPage, setLastPage] = useState<number>(-1);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,7 +51,8 @@ function Main({ navigation }) {
 
   useEffect(() => {
     return () => {
-      Keyboard.removeAllListeners();
+      Keyboard.removeAllListeners('keyboardDidShow');
+      Keyboard.removeAllListeners('keyboardDidHide');
     };
   }, []);
 
@@ -225,14 +227,19 @@ function Main({ navigation }) {
       {renderAddBoardModal()}
     </Container>
   );
-}
-
-Main.navigationOptions = {
-  header: () => (
-    <Header>
-      <HeaderText>Dashboard</HeaderText>
-    </Header>
-  ),
 };
 
-export default Main;
+screen.navigationOptions = ({ navigation }) => {
+  return {
+    header: () => (
+      <Header>
+        <HeaderText>Dashboard</HeaderText>
+        <TouchableOpacity onPress={() => navigation.navigate('Options')}>
+          <Icon name="account" size={24} />
+        </TouchableOpacity>
+      </Header>
+    ),
+  };
+};
+
+export default screen;

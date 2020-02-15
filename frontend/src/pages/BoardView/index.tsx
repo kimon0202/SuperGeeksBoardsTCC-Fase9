@@ -59,7 +59,8 @@ const screen = function BoardView({ navigation }) {
 
   useEffect(() => {
     return () => {
-      Keyboard.removeAllListeners();
+      Keyboard.removeAllListeners('keyboardDidShow');
+      Keyboard.removeAllListeners('keyboardDidHide');
     };
   }, []);
 

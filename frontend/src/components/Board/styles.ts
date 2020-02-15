@@ -1,4 +1,9 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
+
+export const Icon = styled(MaterialIcons)`
+  color: ${props => props.theme.colors.textColor};
+`;
 
 export const Container = styled.View`
   height: 250px;

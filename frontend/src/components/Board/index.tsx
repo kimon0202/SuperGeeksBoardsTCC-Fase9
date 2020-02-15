@@ -1,9 +1,8 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import React, { memo, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import noImage from '../../assets/no-image.png';
-import { Container, Image, InfoContainer, Text, TextInput, Touchable, TouchableImage } from './styles';
+import { Container, Icon, Image, InfoContainer, Text, TextInput, Touchable, TouchableImage } from './styles';
 
 interface BoardProps {
   name: string;
@@ -36,7 +35,7 @@ function Board(props: BoardProps) {
         <InfoContainer>
           <Text>{name}</Text>
           <TouchableOpacity onPress={onIconPress}>
-            <MaterialIcons name="delete" color="#fff" size={24} />
+            <Icon name="delete" size={24} />
           </TouchableOpacity>
         </InfoContainer>
       </Container>
